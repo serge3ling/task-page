@@ -51,6 +51,8 @@ public class TaskPage {
     }
 }
 
+// A git snapshot branch edit.
+
 /*
 In a template:
 
