@@ -1,0 +1,130 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Getting Started: Handling Form Submission</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+
+<body>
+<h1>Форма</h1>
+<form action="#" th:action="@{/taskpage}" th:object="${taskPage}" method="post">
+    <p>Поточна директорія: &quot;<span th:text="*{userDir}">(невідома)</span>&quot;.</p>
+    <p>Id: <input type="text" th:field="*{id}" /></p>
+    <p>Повідомлення: <input type="text" th:field="*{content}" /></p>
+    <p><input type="submit" value="Надіслати" /> <input type="reset" value="Скинути" /></p>
+</form>
+
+<table>
+<th:block th:each="user : ${taskPage.users}">
+<tr>
+  <td th:text="${user.login}">...</td>
+  <td th:text="${user.name}">...</td>
+</tr>
+<tr>
+  <td colspan="2" th:attr="data-login=${user.login}" th:text="${user.address}">...</td>
+</tr>
+</th:block>
+</table>
+
+<p>Виберіть директорію:</p>
+<select id="select-dir" onchange="selectDir();">
+<th:block th:each="dir : ${taskPage.dirs.list}">
+  <option th:text="${dir}">dir</option>
+</th:block>
+</select>
+
+<p>Виберіть дату:</p>
+<select id="select-day" onchange="selectDay();">
+</select>
+
+<p>Виберіть файл з діями:</p>
+<select id="select-txt-file">
+</select>
+
+<!-- TODO: Here's going to be a submit button -->
+
+<div id="files" style="display: none;">
+<th:block th:each="file : ${taskPage.dirs.files}">
+<i th:attr="data-dir=${file.dir}, data-day=${file.day}, data-txt-file=${file.txtFile}">.</i>
+</th:block>
+</div>
+
+</body>
+
+<script type="text/javascript">
+console.log("A.");
+var files = new Array();
+
+function makeFileArray() {
+    var fileElements = document.getElementById("files").getElementsByTagName("i");
+    for (var i = 0; i < fileElements.length; i++) {
+        files.push({
+                "dir": fileElements[i].dataset.dir,
+                "day": fileElements[i].dataset.day,
+                "txtFile": fileElements[i].dataset.txtFile
+                });
+    }
+}
+
+makeFileArray();
+
+function absent(day, days) {
+    found = false;
+    for (var i = 0; i < days.length; i++) {
+        if (day == days[i]) {
+            found = true;
+            break;
+        }
+    }
+    return (found) ? false : true;
+}
+
+function selectDir() {
+    var dirs = document.getElementById("select-dir");
+    var dirVal = dirs.options[dirs.selectedIndex].value;
+    
+    document.getElementById("select-txt-file").innerHTML = "";
+    
+    var days = new Array();
+    var options = "";
+    
+    for (var i = 0; i < files.length; i++) {
+        if (files[i].dir == dirVal) {
+            var day = files[i].day;
+            if (absent(day, days)) {
+                days.push(day);
+                options += "<option>" + day + "</option>\n";
+            }
+        }
+    }
+    
+    document.getElementById("select-day").innerHTML = options;
+    selectDay();
+    
+    console.log("Value: " + dirVal + ".");
+}
+
+function selectDay() {
+    var dirs = document.getElementById("select-dir");
+    var dirVal = dirs.options[dirs.selectedIndex].value;
+    
+    var days = document.getElementById("select-day");
+    var dayVal = days.options[days.selectedIndex].value;
+    
+    var options = "";
+    
+    for (var i = 0; i < files.length; i++) {
+        if (files[i].dir == dirVal &&
+                files[i].day == dayVal) {
+            options += "<option>" + files[i].txtFile + "</option>\n";
+        }
+    }
+    
+    document.getElementById("select-txt-file").innerHTML = options;
+    
+    console.log("selectDay()");
+}
+
+selectDir();
+</script>
+</html>
