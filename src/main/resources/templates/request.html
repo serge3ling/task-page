@@ -28,7 +28,7 @@
 
 <form action="#" th:action="@{/taskpage}" th:object="${taskPage}" method="post">
 <p>Виберіть директорію:</p>
-<select id="select-dir" onchange="selectDir();" th:field="*{val}">
+<select id="select-dir" onchange="selectDir();" th:field="*{dirPick}">
 <th:block th:each="dir : ${taskPage.dirs.list}">
   <option th:text="${dir}" th:attr="value=${dir}">dir</option>
 </th:block>

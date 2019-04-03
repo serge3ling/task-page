@@ -9,7 +9,7 @@ public class TaskPage {
     private String userDir;
     private Dirs dirs;
     //private String[] dirList;
-    private String val;
+    private String dirPick;
     
     public TaskPage() {
         users = new ArrayList<User>();
@@ -51,12 +51,12 @@ public class TaskPage {
         return dirs;
     }
     
-    public String getVal() {
-        return val;
+    public String getDirPick() {
+        return dirPick;
     }
     
-    public void setVal(String val) {
-        this.val = val;
+    public void setDirPick(String dirPick) {
+        this.dirPick = dirPick;
     }
 }
 
