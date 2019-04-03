@@ -39,7 +39,7 @@
 </select>
 
 <p>Виберіть файл з діями:</p>
-<select id="select-txt-file">
+<select id="select-txt-file" th:field="${taskPage.filePick}">
 </select>
 
 <!-- TODO: Here's going to be a submit button. -->
@@ -119,7 +119,8 @@ function selectDay() {
     for (var i = 0; i < files.length; i++) {
         if (files[i].dir == dirVal &&
                 files[i].day == dayVal) {
-            options += "<option>" + files[i].txtFile + "</option>\n";
+            options += "<option value=\"" + files[i].txtFile + "\">" +
+                    files[i].txtFile + "</option>\n";
         }
     }
     

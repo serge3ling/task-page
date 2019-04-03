@@ -10,6 +10,8 @@
 <!--<p th:text="'id: ' + ${taskPage.id}" />
 <p th:text="'content: ' + ${taskPage.content}" />-->
 <p th:text="'Директорія: ' + ${taskPage.dirPick}" />
-<a href="/taskpage">Заповнити знов</a>
+<p th:text="'Файл: ' + ${taskPage.filePick}" />
+<p><a href="/taskpage">Заповнити знов</a></p>
+<p th:text="${taskPage.fileAsHtml}">Неможливо прочитати файл.</p>
 </body>
 </html>

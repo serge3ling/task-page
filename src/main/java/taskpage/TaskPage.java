@@ -1,6 +1,7 @@
 package taskpage;
 
 import java.util.ArrayList;
+import java.io.File;
 
 public class TaskPage {
     private long id;
@@ -10,6 +11,8 @@ public class TaskPage {
     private Dirs dirs;
     //private String[] dirList;
     private String dirPick;
+    private String filePick;
+    private String fileAsHtml;
     
     public TaskPage() {
         users = new ArrayList<User>();
@@ -57,6 +60,20 @@ public class TaskPage {
     
     public void setDirPick(String dirPick) {
         this.dirPick = dirPick;
+    }
+    
+    public String getFilePick() {
+        return filePick;
+    }
+    
+    public void setFilePick(String filePick) {
+        this.filePick = filePick;
+    }
+    
+    public String getFileAsHtml() {
+        fileAsHtml = new FileAsHtml(dirPick + File.separator + filePick).
+                getHtml();
+        return fileAsHtml;
     }
 }
 
