@@ -7,12 +7,12 @@
 
 <body>
 <h1>Форма</h1>
-<form action="#" th:action="@{/taskpage}" th:object="${taskPage}" method="post">
+<!--<form action="#" th:action="@{/taskpage}" th:object="${taskPage}" method="post">
     <p>Поточна директорія: &quot;<span th:text="*{userDir}">(невідома)</span>&quot;.</p>
     <p>Id: <input type="text" th:field="*{id}" /></p>
     <p>Повідомлення: <input type="text" th:field="*{content}" /></p>
     <p><input type="submit" value="Надіслати" /> <input type="reset" value="Скинути" /></p>
-</form>
+</form>-->
 
 <table>
 <th:block th:each="user : ${taskPage.users}">
@@ -26,10 +26,11 @@
 </th:block>
 </table>
 
+<form action="#" th:action="@{/taskpage}" th:object="${taskPage}" method="post">
 <p>Виберіть директорію:</p>
-<select id="select-dir" onchange="selectDir();">
+<select id="select-dir" onchange="selectDir();" th:field="*{val}">
 <th:block th:each="dir : ${taskPage.dirs.list}">
-  <option th:text="${dir}">dir</option>
+  <option th:text="${dir}" th:attr="value=${dir}">dir</option>
 </th:block>
 </select>
 
@@ -41,7 +42,9 @@
 <select id="select-txt-file">
 </select>
 
-<!-- TODO: Here's going to be a submit button -->
+<!-- TODO: Here's going to be a submit button. -->
+<p><input type="submit" value="Отримати" /></p>
+</form>
 
 <div id="files" style="display: none;">
 <th:block th:each="file : ${taskPage.dirs.files}">

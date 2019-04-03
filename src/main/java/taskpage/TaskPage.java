@@ -9,6 +9,7 @@ public class TaskPage {
     private String userDir;
     private Dirs dirs;
     //private String[] dirList;
+    private String val;
     
     public TaskPage() {
         users = new ArrayList<User>();
@@ -48,6 +49,14 @@ public class TaskPage {
     
     public Dirs getDirs() {
         return dirs;
+    }
+    
+    public String getVal() {
+        return val;
+    }
+    
+    public void setVal(String val) {
+        this.val = val;
     }
 }
 
