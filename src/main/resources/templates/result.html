@@ -7,8 +7,11 @@
 
 <body>
 <h1>Відповідь</h1>
-<p th:text="'id: ' + ${taskPage.id}" />
-<p th:text="'content: ' + ${taskPage.content}" />
-<a href="/taskpage">Надіслати інше повідомлення</a>
+<!--<p th:text="'id: ' + ${taskPage.id}" />
+<p th:text="'content: ' + ${taskPage.content}" />-->
+<p th:text="'Директорія: ' + ${taskPage.dirPick}" />
+<p th:text="'Файл: ' + ${taskPage.filePick}" />
+<p><a href="/taskpage">Заповнити знов</a></p>
+<p th:utext="${taskPage.fileAsHtml}">Неможливо прочитати файл.</p>
 </body>
 </html>

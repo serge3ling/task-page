@@ -5,14 +5,11 @@ import java.io.File;
 import java.io.FilenameFilter;
 
 public class Dirs {
-    public static final String WORKDIR = "workdir";
-    
     private String[] list;
     private ArrayList<FileDesc> files;
     
     public Dirs() {
-        File dir = new File(System.getProperty("user.dir") + File.separator +
-                WORKDIR);
+        File dir = new File(Conf.getConf().getWorkDir());
         files = new ArrayList<FileDesc>();
         list = dir.list(new FilenameFilter() {
             @Override
