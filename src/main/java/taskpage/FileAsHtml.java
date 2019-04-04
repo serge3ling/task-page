@@ -57,7 +57,7 @@ public class FileAsHtml {
         String txt = "";
         boolean txtDiffers = true;
         if (goOn) {
-            int ix = line.indexOf(PREFIX);
+            int ix = line.toLowerCase().indexOf(PREFIX);
             if (ix >= 0) {
                 txt = line.substring(ix + PREFIX_LENGTH);
             } else {
@@ -69,19 +69,19 @@ public class FileAsHtml {
             int ix = txt.indexOf("&");
             if (ix >= 0) {
                 txt = txt.substring(0, ix);
-                if (txt.length() > TIME_MARK_LENGTH) {
-                    txt = txt.substring(txt.length() - TIME_MARK_LENGTH).
+            }
+            
+            if (txt.length() > TIME_MARK_LENGTH) {
+                txt = txt.substring(txt.length() - TIME_MARK_LENGTH).
                         replaceAll("\\Q_\\E", ":");
-                } else {
-                    txtDiffers = false;
-                }
+            } else {
+                txtDiffers = false;
             }
         }
         
         if (goOn) {
-            oc = "<a href=\"" + line + "\">";
-            oc += txtDiffers ? txt : line;
-            oc += "</a><br/>\n";
+            oc = "<a href=\"" + line + "\">" + (txtDiffers ? txt : line) +
+                    "</a><br/>\n";
         }
         
         return oc;

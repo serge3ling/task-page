@@ -12,6 +12,6 @@
 <p th:text="'Директорія: ' + ${taskPage.dirPick}" />
 <p th:text="'Файл: ' + ${taskPage.filePick}" />
 <p><a href="/taskpage">Заповнити знов</a></p>
-<p th:text="${taskPage.fileAsHtml}">Неможливо прочитати файл.</p>
+<p th:utext="${taskPage.fileAsHtml}">Неможливо прочитати файл.</p>
 </body>
 </html>

@@ -71,7 +71,8 @@ public class TaskPage {
     }
     
     public String getFileAsHtml() {
-        fileAsHtml = new FileAsHtml(dirPick + File.separator + filePick).
+        fileAsHtml = new FileAsHtml(Conf.getConf().getWorkDir() +
+                File.separator + dirPick + File.separator + filePick).
                 getHtml();
         return fileAsHtml;
     }
