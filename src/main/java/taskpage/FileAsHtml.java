@@ -5,6 +5,25 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.BufferedReader;
 
+import com.autonomy.aci.client.services.AciService;
+import com.autonomy.aci.client.services.impl.AciServiceImpl;
+import com.autonomy.aci.client.services.impl.DocumentProcessor;
+import com.autonomy.aci.client.transport.AciServerDetails;
+import com.autonomy.aci.client.transport.impl.AciHttpClientImpl;
+import com.autonomy.aci.client.util.ActionParameters;
+import com.autonomy.aci.client.services.AciServiceException;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+
 public class FileAsHtml {
     public final String PREFIX = "configname=";
     public final int PREFIX_LENGTH = PREFIX.length();
@@ -41,6 +60,18 @@ public class FileAsHtml {
         if (goOn) {
             html = sb.toString();
         }
+    }
+    
+    String handleAci(String line) {
+        String oc = "";
+        UrlParse urlParse = new UrlParse(line);
+        final AciService aciService = new AciServiceImpl(
+                new AciHttpClientImpl(HttpClientBuilder.create().build()),
+                new AciServerDetails(urlParse.getHost(), urlParse.getPort())
+        );
+        
+        
+        return oc;
     }
     
     String parseLine(String line) {
@@ -80,6 +111,7 @@ public class FileAsHtml {
         }
         
         if (goOn) {
+            handleAci(line); // FIXIT: return type is String
             oc = "<a href=\"" + line + "\">" + (txtDiffers ? txt : line) +
                     "</a><br/>\n";
         }
