@@ -19,6 +19,8 @@
 <th:block th:each="answer : ${taskPage.answers}">
   <tr>
   <td th:text="${answer.txt}"></td>
+  <td th:text="${answer.response}"></td>
+  <td th:text="${answer.token}"></td>
   </tr>
 </th:block>
 </table>
