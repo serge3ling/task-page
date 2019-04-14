@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.BufferedReader;
 
+import com.autonomy.aci.client.services.AciConstants;
 import com.autonomy.aci.client.services.AciService;
 import com.autonomy.aci.client.services.impl.AciServiceImpl;
 import com.autonomy.aci.client.services.impl.DocumentProcessor;
@@ -12,6 +13,9 @@ import com.autonomy.aci.client.transport.AciServerDetails;
 import com.autonomy.aci.client.transport.impl.AciHttpClientImpl;
 import com.autonomy.aci.client.util.ActionParameters;
 import com.autonomy.aci.client.services.AciServiceException;
+
+import java.util.Map;
+import java.util.ArrayList;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -30,9 +34,13 @@ public class FileAsHtml {
     public final int TIME_MARK_LENGTH = 8;
     
     private String html;
+    private ArrayList<AnswerRow> answers;
+    private boolean oneConnectionFail;
     
     public FileAsHtml(String fileName) {
         html = "";
+        answers = new ArrayList<AnswerRow>();
+        oneConnectionFail = false;
         StringBuilder sb = new StringBuilder();
         
         boolean goOn = true;
@@ -62,14 +70,75 @@ public class FileAsHtml {
         }
     }
     
-    String handleAci(String line) {
+    String handleAci(String line, String txt) {
         String oc = "";
         UrlParse urlParse = new UrlParse(line);
+        
+        boolean goOn = !oneConnectionFail;
+        
         final AciService aciService = new AciServiceImpl(
                 new AciHttpClientImpl(HttpClientBuilder.create().build()),
                 new AciServerDetails(urlParse.getHost(), urlParse.getPort())
         );
         
+        final ActionParameters parameters = new ActionParameters();
+        Map map = urlParse.getMap();
+        for (String key : urlParse.getKeySet()) {
+            if (key.toLowerCase().equals("action")) {
+                parameters.add(AciConstants.PARAM_ACTION, map.get(key));
+            } else {
+                parameters.add(key, map.get(key));
+            }
+        }
+        
+        AciServerDetails.TransportProtocol protocol = AciServerDetails.TransportProtocol.HTTP;
+        switch (urlParse.getProtocol().toLowerCase()) {
+            case "http":
+                protocol = AciServerDetails.TransportProtocol.HTTP;
+                break; // falls through
+            case "https":
+                protocol = AciServerDetails.TransportProtocol.HTTPS;
+                break; // falls through
+        }
+        
+        Document answer = null;
+        if (goOn) {
+            try {
+                answer = aciService.executeAction(
+                        new AciServerDetails(protocol, urlParse.getHost(), urlParse.getPort()),
+                        parameters,
+                        new DocumentProcessor()
+                );
+            } catch (AciServiceException ase) {
+                goOn = false;
+                oneConnectionFail = true;
+                answers.add(new AnswerRow(txt, "No connection"));
+            }
+        }
+        
+        final XPath xpath = XPathFactory.newInstance().newXPath();
+        
+        String responseWord = "Fail";
+        String token = "";
+        if (goOn) {
+            try {
+                responseWord = xpath.evaluate("/autnresponse/response", answer);
+            } catch (XPathExpressionException e) {
+                goOn = false;
+                answers.add(new AnswerRow(txt, responseWord, token));
+                e.printStackTrace();
+            }
+        }
+        
+        if (goOn) {
+            try {
+                token = xpath.evaluate("/autnresponse/responsedata/token", answer);
+                answers.add(new AnswerRow(txt, responseWord, token));
+            } catch (XPathExpressionException e) {
+                goOn = false;
+                e.printStackTrace();
+            }
+        }
         
         return oc;
     }
@@ -111,7 +180,7 @@ public class FileAsHtml {
         }
         
         if (goOn) {
-            handleAci(line); // FIXIT: return type is String
+            handleAci(line, txt); // TODO: return type is String
             oc = "<a href=\"" + line + "\">" + (txtDiffers ? txt : line) +
                     "</a><br/>\n";
         }
@@ -121,5 +190,9 @@ public class FileAsHtml {
     
     public String getHtml() {
         return html;
+    }
+    
+    public ArrayList<AnswerRow> getAnswers() {
+        return answers;
     }
 }

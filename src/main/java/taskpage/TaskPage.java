@@ -13,6 +13,7 @@ public class TaskPage {
     private String dirPick;
     private String filePick;
     private String fileAsHtml;
+    private ArrayList<AnswerRow> answers;
     
     public TaskPage() {
         users = new ArrayList<User>();
@@ -75,6 +76,13 @@ public class TaskPage {
                 File.separator + dirPick + File.separator + filePick).
                 getHtml();
         return fileAsHtml;
+    }
+    
+    public ArrayList<AnswerRow> getAnswers() {
+        answers = new FileAsHtml(Conf.getConf().getWorkDir() +
+                File.separator + dirPick + File.separator + filePick).
+                getAnswers();
+        return answers;
     }
 }
 

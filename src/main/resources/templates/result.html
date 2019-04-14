@@ -13,5 +13,14 @@
 <p th:text="'Файл: ' + ${taskPage.filePick}" />
 <p><a href="/taskpage">Заповнити знов</a></p>
 <p th:utext="${taskPage.fileAsHtml}">Неможливо прочитати файл.</p>
+
+<table>
+<tr><th></th><th>Відповідь</th><th>Token</th></tr>
+<th:block th:each="answer : ${taskPage.answers}">
+  <tr>
+  <td th:text="${answer.txt}"></td>
+  </tr>
+</th:block>
+</table>
 </body>
 </html>
