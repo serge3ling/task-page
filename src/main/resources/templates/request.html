@@ -3,10 +3,11 @@
 <head>
 <title>Завдання по каналах</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="stylesheet" type="text/css" href="common.css"/>
 </head>
 
 <body>
-<h1>Форма</h1>
+<h1>Запуск завдань</h1>
 <!--<form action="#" th:action="@{/taskpage}" th:object="${taskPage}" method="post">
     <p>Поточна директорія: &quot;<span th:text="*{userDir}">(невідома)</span>&quot;.</p>
     <p>Id: <input type="text" th:field="*{id}" /></p>
@@ -14,7 +15,7 @@
     <p><input type="submit" value="Надіслати" /> <input type="reset" value="Скинути" /></p>
 </form>-->
 
-<table>
+<!--<table>
 <th:block th:each="user : ${taskPage.users}">
 <tr>
   <td th:text="${user.login}">...</td>
@@ -24,7 +25,7 @@
   <td colspan="2" th:attr="data-login=${user.login}" th:text="${user.address}">...</td>
 </tr>
 </th:block>
-</table>
+</table>-->
 
 <form action="#" th:action="@{/taskpage}" th:object="${taskPage}" method="post">
 <p>Виберіть директорію:</p>
@@ -38,7 +39,7 @@
 <select id="select-day" onchange="selectDay();">
 </select>
 
-<p>Виберіть файл з діями:</p>
+<p>Виберіть файл зі списком дій:</p>
 <select id="select-txt-file" th:field="${taskPage.filePick}">
 </select>
 

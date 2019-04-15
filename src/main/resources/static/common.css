@@ -1,0 +1,9 @@
+.response-success {
+    color: green;
+    background-color: white;
+}
+
+.response-fail {
+    color: DarkRed;
+    background-color: white;
+}

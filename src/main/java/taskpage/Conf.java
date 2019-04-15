@@ -28,6 +28,7 @@ public class Conf {
             Class.forName(svcClass); System.out.println("Class found: " + svcClass);
             com.autonomy.aci.client.services.AciService aciService = new com.autonomy.aci.client.services.impl.AciServiceImpl();
             System.out.println(aciService);
+            aciService = null;
         } catch (ClassNotFoundException ecnf) {
             System.out.println("Class not found: " + svcClass);
         }

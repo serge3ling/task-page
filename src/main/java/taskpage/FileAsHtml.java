@@ -70,11 +70,12 @@ public class FileAsHtml {
         }
     }
     
-    String handleAci(String line, String txt) {
-        String oc = "";
+    void handleAci(String line, String txt) {
+        if (oneConnectionFail) {
+            answers.add(new AnswerRow(line, txt, "..."));
+            return;
+        }
         UrlParse urlParse = new UrlParse(line);
-        
-        boolean goOn = !oneConnectionFail;
         
         final AciService aciService = new AciServiceImpl(
                 new AciHttpClientImpl(HttpClientBuilder.create().build()),
@@ -102,30 +103,29 @@ public class FileAsHtml {
         }
         
         Document answer = null;
-        if (goOn) {
-            try {
-                answer = aciService.executeAction(
-                        new AciServerDetails(protocol, urlParse.getHost(), urlParse.getPort()),
-                        parameters,
-                        new DocumentProcessor()
-                );
-            } catch (AciServiceException ase) {
-                goOn = false;
-                oneConnectionFail = true;
-                answers.add(new AnswerRow(txt, "No connection"));
-            }
+        String responseWord = "No connection";
+        String token = "";
+        boolean goOn = true;
+        try {
+            answer = aciService.executeAction(
+                    new AciServerDetails(
+                            protocol, urlParse.getHost(), urlParse.getPort()
+                    ),
+                    parameters,
+                    new DocumentProcessor()
+            );
+        } catch (AciServiceException ase) {
+            goOn = false;
+            oneConnectionFail = true;
         }
         
         final XPath xpath = XPathFactory.newInstance().newXPath();
         
-        String responseWord = "Fail";
-        String token = "";
-        if (goOn) {
+        if (answer != null) {
             try {
                 responseWord = xpath.evaluate("/autnresponse/response", answer);
             } catch (XPathExpressionException e) {
                 goOn = false;
-                answers.add(new AnswerRow(txt, responseWord, token));
                 e.printStackTrace();
             }
         }
@@ -133,14 +133,14 @@ public class FileAsHtml {
         if (goOn) {
             try {
                 token = xpath.evaluate("/autnresponse/responsedata/token", answer);
-                answers.add(new AnswerRow(txt, responseWord, token));
             } catch (XPathExpressionException e) {
                 goOn = false;
+                token = "(Token not parsed.)";
                 e.printStackTrace();
             }
         }
         
-        return oc;
+        answers.add(new AnswerRow(line, txt, responseWord, token));
     }
     
     String parseLine(String line) {
@@ -180,7 +180,7 @@ public class FileAsHtml {
         }
         
         if (goOn) {
-            handleAci(line, txt); // TODO: return type is String
+            handleAci(line, txt);
             oc = "<a href=\"" + line + "\">" + (txtDiffers ? txt : line) +
                     "</a><br/>\n";
         }

@@ -3,26 +3,30 @@
 <head>
 <title>Завдання по каналах: відповідь</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="stylesheet" type="text/css" href="common.css"/>
 </head>
 
 <body>
 <h1>Відповідь</h1>
+
 <!--<p th:text="'id: ' + ${taskPage.id}" />
 <p th:text="'content: ' + ${taskPage.content}" />-->
 <p th:text="'Директорія: ' + ${taskPage.dirPick}" />
 <p th:text="'Файл: ' + ${taskPage.filePick}" />
 <p><a href="/taskpage">Заповнити знов</a></p>
-<p th:utext="${taskPage.fileAsHtml}">Неможливо прочитати файл.</p>
 
 <table>
 <tr><th></th><th>Відповідь</th><th>Token</th></tr>
 <th:block th:each="answer : ${taskPage.answers}">
   <tr>
-  <td th:text="${answer.txt}"></td>
-  <td th:text="${answer.response}"></td>
+  <td><a th:text="${answer.txt}" th:attr="href=${answer.href}"></a></td>
+  <td th:attr="class=${answer.cssClass}" th:text="${answer.response}"></td>
   <td th:text="${answer.token}"></td>
   </tr>
 </th:block>
 </table>
+
+<!--<p th:utext="${taskPage.fileAsHtml}">Неможливо прочитати файл.</p>-->
+
 </body>
 </html>

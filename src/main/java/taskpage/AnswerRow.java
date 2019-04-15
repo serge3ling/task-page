@@ -1,6 +1,7 @@
 package taskpage;
 
 public class AnswerRow {
+    private String href;
     private String txt;
     private String response;
     private String token;
@@ -9,17 +10,18 @@ public class AnswerRow {
     public void setResponse(String response) {
         this.response = response;
         cssClass = (response.toLowerCase().equals("success") ?
-                ("response-green") : ("response-black"));
+                ("response-success") : ("response-fail"));
     }
     
-    public AnswerRow(String txt, String response, String token) {
+    public AnswerRow(String href, String txt, String response, String token) {
+        this.href = href;
         this.txt = txt;
         setResponse(response);
         this.token = token;
     }
     
-    public AnswerRow(String txt, String response) {
-        this(txt, response, "");
+    public AnswerRow(String href, String txt, String response) {
+        this(href, txt, response, "");
     }
     
     public String getResponse() {
@@ -36,5 +38,9 @@ public class AnswerRow {
     
     public String getTxt() {
         return txt;
+    }
+    
+    public String getHref() {
+        return href;
     }
 }
