@@ -5,15 +5,46 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.BufferedReader;
 
+import com.autonomy.aci.client.services.AciConstants;
+import com.autonomy.aci.client.services.AciService;
+import com.autonomy.aci.client.services.impl.AciServiceImpl;
+import com.autonomy.aci.client.services.impl.DocumentProcessor;
+import com.autonomy.aci.client.transport.AciServerDetails;
+import com.autonomy.aci.client.transport.impl.AciHttpClientImpl;
+import com.autonomy.aci.client.util.ActionParameters;
+import com.autonomy.aci.client.services.AciServiceException;
+
+import java.util.Map;
+import java.util.ArrayList;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+
 public class FileAsHtml {
     public final String PREFIX = "configname=";
     public final int PREFIX_LENGTH = PREFIX.length();
     public final int TIME_MARK_LENGTH = 8;
     
     private String html;
+    private ArrayList<AnswerRow> answers;
+    private boolean oneConnectionFail;
+    private String mask;
+    private int counter = 0;
     
-    public FileAsHtml(String fileName) {
+    public FileAsHtml(String fileName, String mask) {
+        this.mask = (mask == null) ? ("") : mask;
+        
         html = "";
+        answers = new ArrayList<AnswerRow>();
+        oneConnectionFail = false;
         StringBuilder sb = new StringBuilder();
         
         boolean goOn = true;
@@ -41,6 +72,91 @@ public class FileAsHtml {
         if (goOn) {
             html = sb.toString();
         }
+    }
+    
+    boolean maskYesAt(int i) {
+        boolean oc = (mask != null);
+        
+        if (oc) {
+            if ((mask.length() > i) && (i >= 0)) {
+                oc = (mask.charAt(i) == '+');
+            }
+        }
+        
+        return oc;
+    }
+    
+    void handleAci(String line, String txt) {
+        if (oneConnectionFail) {
+            answers.add(new AnswerRow(line, txt, "..."));
+            return;
+        }
+        UrlParse urlParse = new UrlParse(line);
+        
+        final AciService aciService = new AciServiceImpl(
+                new AciHttpClientImpl(HttpClientBuilder.create().build()),
+                new AciServerDetails(urlParse.getHost(), urlParse.getPort())
+        );
+        
+        final ActionParameters parameters = new ActionParameters();
+        Map map = urlParse.getMap();
+        for (String key : urlParse.getKeySet()) {
+            if (key.toLowerCase().equals("action")) {
+                parameters.add(AciConstants.PARAM_ACTION, map.get(key));
+            } else {
+                parameters.add(key, map.get(key));
+            }
+        }
+        
+        AciServerDetails.TransportProtocol protocol = AciServerDetails.TransportProtocol.HTTP;
+        switch (urlParse.getProtocol().toLowerCase()) {
+            case "http":
+                protocol = AciServerDetails.TransportProtocol.HTTP;
+                break; // falls through
+            case "https":
+                protocol = AciServerDetails.TransportProtocol.HTTPS;
+                break; // falls through
+        }
+        
+        Document answer = null;
+        String responseWord = "(No connection)";
+        String token = "";
+        boolean goOn = true;
+        try {
+            answer = aciService.executeAction(
+                    new AciServerDetails(
+                            protocol, urlParse.getHost(), urlParse.getPort()
+                    ),
+                    parameters,
+                    new DocumentProcessor()
+            );
+        } catch (AciServiceException ase) {
+            goOn = false;
+            oneConnectionFail = true;
+        }
+        
+        final XPath xpath = XPathFactory.newInstance().newXPath();
+        
+        if (answer != null) {
+            try {
+                responseWord = xpath.evaluate("/autnresponse/response", answer);
+            } catch (XPathExpressionException e) {
+                goOn = false;
+                e.printStackTrace();
+            }
+        }
+        
+        if (goOn) {
+            try {
+                token = xpath.evaluate("/autnresponse/responsedata/token", answer);
+            } catch (XPathExpressionException e) {
+                goOn = false;
+                token = "(Token not parsed.)";
+                e.printStackTrace();
+            }
+        }
+        
+        answers.add(new AnswerRow(line, txt, responseWord, token));
     }
     
     String parseLine(String line) {
@@ -80,6 +196,13 @@ public class FileAsHtml {
         }
         
         if (goOn) {
+            if (mask.length() == 0) {
+                answers.add(new AnswerRow(line, txt, "", ""));
+            }
+            if ((mask.length() > 0) && maskYesAt(counter)) {
+                handleAci(line, txt);
+            }
+            counter++;
             oc = "<a href=\"" + line + "\">" + (txtDiffers ? txt : line) +
                     "</a><br/>\n";
         }
@@ -89,5 +212,9 @@ public class FileAsHtml {
     
     public String getHtml() {
         return html;
+    }
+    
+    public ArrayList<AnswerRow> getAnswers() {
+        return answers;
     }
 }

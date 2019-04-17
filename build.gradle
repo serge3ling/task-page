@@ -26,6 +26,9 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 dependencies {
+    //compile fileTree(dir: "libs", include: "*.jar")
+    // https://mvnrepository.com/artifact/com.hp.autonomy.aci.client/aci-api
+    compile("com.hp.autonomy.aci.client:aci-api:12.0.0")
     compile("org.springframework.boot:spring-boot-starter-web")
     compile("org.springframework.boot:spring-boot-starter-thymeleaf")
     testCompile("junit:junit")

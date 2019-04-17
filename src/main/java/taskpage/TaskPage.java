@@ -13,8 +13,11 @@ public class TaskPage {
     private String dirPick;
     private String filePick;
     private String fileAsHtml;
+    private ArrayList<AnswerRow> answers;
+    private String mask = "";
     
     public TaskPage() {
+        System.out.println("Створюється новий примірник TaskPage.");
         users = new ArrayList<User>();
         users.add(new User("nick", "Nicolas Cage", "Hollywood, CA"));
         users.add(new User("doe", "John Doe", "Washington, DC"));
@@ -72,27 +75,23 @@ public class TaskPage {
     
     public String getFileAsHtml() {
         fileAsHtml = new FileAsHtml(Conf.getConf().getWorkDir() +
-                File.separator + dirPick + File.separator + filePick).
+                File.separator + dirPick + File.separator + filePick, mask).
                 getHtml();
         return fileAsHtml;
     }
+    
+    public ArrayList<AnswerRow> getAnswers() {
+        answers = new FileAsHtml(Conf.getConf().getWorkDir() +
+                File.separator + dirPick + File.separator + filePick, mask).
+                getAnswers();
+        return answers;
+    }
+    
+    public void setMask(String mask) {
+        this.mask = mask;
+    }
+    
+    public String getMask() {
+        return mask;
+    }
 }
-
-// A git snapshot branch edit.
-// This line: another edit.
-
-/*
-In a template:
-
-<table>
-    <th:block th:each="user : ${users}">
-        <tr>
-            <td th:text="${user.login}">...</td>
-            <td th:text="${user.name}">...</td>
-        </tr>
-        <tr>
-            <td colspan="2" th:text="${user.address}">...</td>
-        </tr>
-    </th:block>
-</table>
-*/

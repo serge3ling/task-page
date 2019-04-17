@@ -21,6 +21,17 @@ public class Conf {
         workDir = System.getProperty("user.dir") + File.separator +
                 WORKDIR_DEFAULT;
         parseSuccess = parseConf();
+        
+        String svcClass = "com.autonomy.aci.client.services.impl.AciServiceImpl";
+        System.out.println("Trying to find class " + svcClass);
+        try {
+            Class.forName(svcClass); System.out.println("Class found: " + svcClass);
+            com.autonomy.aci.client.services.AciService aciService = new com.autonomy.aci.client.services.impl.AciServiceImpl();
+            System.out.println(aciService);
+            aciService = null;
+        } catch (ClassNotFoundException ecnf) {
+            System.out.println("Class not found: " + svcClass);
+        }
     }
     
     boolean parseLine(String line) {

@@ -3,15 +3,101 @@
 <head>
 <title>Завдання по каналах: відповідь</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="stylesheet" type="text/css" href="common.css"/>
 </head>
 
 <body>
 <h1>Відповідь</h1>
+
 <!--<p th:text="'id: ' + ${taskPage.id}" />
 <p th:text="'content: ' + ${taskPage.content}" />-->
-<p th:text="'Директорія: ' + ${taskPage.dirPick}" />
-<p th:text="'Файл: ' + ${taskPage.filePick}" />
-<p><a href="/taskpage">Заповнити знов</a></p>
-<p th:utext="${taskPage.fileAsHtml}">Неможливо прочитати файл.</p>
+<p><a href="/taskpage">Спочатку</a></p>
+
+<form action="#" th:action="@{/taskpage}" th:object="${taskPage}" method="post">
+<p th:text="'Директорія: ' + *{dirPick}"></p>
+<p style="display: none;"><input th:attr="value=*{dirPick}" th:field="*{dirPick}"/></p>
+<p th:text="'Файл: ' + *{filePick}"></p>
+<p style="display: none;"><input th:attr="value=*{filePick}" th:field="*{filePick}"/></p>
+<p style="display: none;"><input id="mask" th:field="*{mask}"/></p>
+<p><input id="submitBtn" type="submit" value="Запустити"/></p>
+</form>
+
+<table id="ticks">
+<tr>
+  <th><input id="tick-all" type="checkbox" onclick="tickedAll();"/></th>
+  <th></th>
+  <th>Відповідь</th>
+  <th>Token</th>
+</tr>
+<th:block th:each="answer : ${taskPage.answers}">
+  <tr>
+  <td><input type="checkbox" onclick="ticked();"/></td>
+  <td><a th:text="${answer.txt}" th:attr="href=${answer.href}"></a></td>
+  <td th:attr="class=${answer.cssClass}" th:text="${answer.response}"></td>
+  <td th:text="${answer.token}"></td>
+  <!--<td><input th:attr="value=${answer.cssClass}"/></td>-->
+  </tr>
+</th:block>
+</table>
+
+<!--<p th:utext="${taskPage.fileAsHtml}">Неможливо прочитати файл.</p>-->
+
 </body>
+
+<script type="text/javascript">
+function prepareView() {
+    var mask = document.getElementById("mask");
+    var stepOne = (mask.value == "") ? true : false;
+    
+    var displayStyle = stepOne ? ("block") : ("none");
+    
+    document.getElementById("submitBtn").style.display = displayStyle;
+    
+    var rows = document.getElementById("ticks").getElementsByTagName("tr");
+    rows[0].getElementsByTagName("th")[0].getElementsByTagName("input")[0].
+            style.display = displayStyle;
+    for (var i = 1; i < rows.length; i++) {
+        rows[i].getElementsByTagName("td")[0].getElementsByTagName("input")[0].
+                style.display = displayStyle;
+    }
+}
+
+prepareView();
+
+function ticked() {
+    var rows = document.getElementById("ticks").getElementsByTagName("tr");
+    
+    var mask = "";
+    var allTicked = true;
+    
+    // Starting from 1 as 0 is the header row:
+    for (var i = 1; i < rows.length; i++) {
+        var ticked = rows[i].getElementsByTagName("td")[0].
+                getElementsByTagName("input")[0].checked;
+        mask += (ticked ? "+" : "_");
+        allTicked = allTicked && ticked;
+    }
+    
+    document.getElementById("mask").value = mask;
+    
+    document.getElementById("tick-all").checked = allTicked;
+}
+
+function tickedAll() {
+    var rows = document.getElementById("ticks").getElementsByTagName("tr");
+    
+    var mask = "";
+    var ticked = document.getElementById("tick-all").checked;
+    var maskChar = (ticked ? "+" : "_");
+    
+    // Starting from 1 as 0 is the header row:
+    for (var i = 1; i < rows.length; i++) {
+        rows[i].getElementsByTagName("td")[0].
+                getElementsByTagName("input")[0].checked = ticked;
+        mask += maskChar;
+    }
+    
+    document.getElementById("mask").value = mask;
+}
+</script>
 </html>
