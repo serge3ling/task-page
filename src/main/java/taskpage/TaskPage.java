@@ -14,7 +14,7 @@ public class TaskPage {
     private String filePick;
     private String fileAsHtml;
     private ArrayList<AnswerRow> answers;
-    private String mask = "(пусто)";
+    private String mask = "";
     
     public TaskPage() {
         System.out.println("Створюється новий примірник TaskPage.");
@@ -75,14 +75,14 @@ public class TaskPage {
     
     public String getFileAsHtml() {
         fileAsHtml = new FileAsHtml(Conf.getConf().getWorkDir() +
-                File.separator + dirPick + File.separator + filePick).
+                File.separator + dirPick + File.separator + filePick, mask).
                 getHtml();
         return fileAsHtml;
     }
     
     public ArrayList<AnswerRow> getAnswers() {
         answers = new FileAsHtml(Conf.getConf().getWorkDir() +
-                File.separator + dirPick + File.separator + filePick).
+                File.separator + dirPick + File.separator + filePick, mask).
                 getAnswers();
         return answers;
     }

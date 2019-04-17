@@ -15,12 +15,11 @@
 
 <form action="#" th:action="@{/taskpage}" th:object="${taskPage}" method="post">
 <p th:text="'Директорія: ' + *{dirPick}"></p>
-<p><input th:attr="value=*{dirPick}" th:field="*{dirPick}"/></p>
+<p style="display: none;"><input th:attr="value=*{dirPick}" th:field="*{dirPick}"/></p>
 <p th:text="'Файл: ' + *{filePick}"></p>
-<p><input th:attr="value=*{filePick}" th:field="*{filePick}"/></p>
-<p>Маска: <span th:text="*{mask}"></span></p>
-<p><input id="mask" th:field="*{mask}"/></p>
-<p><input type="submit" value="Запустити"/></p>
+<p style="display: none;"><input th:attr="value=*{filePick}" th:field="*{filePick}"/></p>
+<p style="display: none;"><input id="mask" th:field="*{mask}"/></p>
+<p><input id="submitBtn" type="submit" value="Запустити"/></p>
 </form>
 
 <table id="ticks">
@@ -46,6 +45,25 @@
 </body>
 
 <script type="text/javascript">
+function prepareView() {
+    var mask = document.getElementById("mask");
+    var stepOne = (mask.value == "") ? true : false;
+    
+    var displayStyle = stepOne ? ("block") : ("none");
+    
+    document.getElementById("submitBtn").style.display = displayStyle;
+    
+    var rows = document.getElementById("ticks").getElementsByTagName("tr");
+    rows[0].getElementsByTagName("th")[0].getElementsByTagName("input")[0].
+            style.display = displayStyle;
+    for (var i = 1; i < rows.length; i++) {
+        rows[i].getElementsByTagName("td")[0].getElementsByTagName("input")[0].
+                style.display = displayStyle;
+    }
+}
+
+prepareView();
+
 function ticked() {
     var rows = document.getElementById("ticks").getElementsByTagName("tr");
     

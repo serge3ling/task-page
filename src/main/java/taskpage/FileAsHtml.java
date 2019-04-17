@@ -36,8 +36,12 @@ public class FileAsHtml {
     private String html;
     private ArrayList<AnswerRow> answers;
     private boolean oneConnectionFail;
+    private String mask;
+    private int counter = 0;
     
-    public FileAsHtml(String fileName) {
+    public FileAsHtml(String fileName, String mask) {
+        this.mask = (mask == null) ? ("") : mask;
+        
         html = "";
         answers = new ArrayList<AnswerRow>();
         oneConnectionFail = false;
@@ -68,6 +72,18 @@ public class FileAsHtml {
         if (goOn) {
             html = sb.toString();
         }
+    }
+    
+    boolean maskYesAt(int i) {
+        boolean oc = (mask != null);
+        
+        if (oc) {
+            if ((mask.length() > i) && (i >= 0)) {
+                oc = (mask.charAt(i) == '+');
+            }
+        }
+        
+        return oc;
     }
     
     void handleAci(String line, String txt) {
@@ -180,7 +196,13 @@ public class FileAsHtml {
         }
         
         if (goOn) {
-            handleAci(line, txt);
+            if (mask.length() == 0) {
+                answers.add(new AnswerRow(line, txt, "", ""));
+            }
+            if ((mask.length() > 0) && maskYesAt(counter)) {
+                handleAci(line, txt);
+            }
+            counter++;
             oc = "<a href=\"" + line + "\">" + (txtDiffers ? txt : line) +
                     "</a><br/>\n";
         }
