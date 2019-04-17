@@ -103,7 +103,7 @@ public class FileAsHtml {
         }
         
         Document answer = null;
-        String responseWord = "No connection";
+        String responseWord = "(No connection)";
         String token = "";
         boolean goOn = true;
         try {
