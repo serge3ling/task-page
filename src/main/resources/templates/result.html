@@ -19,15 +19,15 @@
 <p th:text="'Файл: ' + *{filePick}"></p>
 <p style="display: none;"><input th:attr="value=*{filePick}" th:field="*{filePick}"/></p>
 <p style="display: none;"><input id="mask" th:field="*{mask}"/></p>
-<p><input id="submitBtn" type="submit" value="Запустити"/></p>
+<p><input id="submit-btn" type="submit" value="Запустити"/></p>
 </form>
 
 <table id="ticks">
 <tr>
   <th><input id="tick-all" type="checkbox" onclick="tickedAll();"/></th>
-  <th></th>
-  <th>Відповідь</th>
-  <th>Token</th>
+  <th>Завдання</th>
+  <th><span id="th-answer">Відповідь</span></th>
+  <th><span id="th-token">Token</span></th>
 </tr>
 <th:block th:each="answer : ${taskPage.answers}">
   <tr>
@@ -50,8 +50,11 @@ function prepareView() {
     var stepOne = (mask.value == "") ? true : false;
     
     var displayStyle = stepOne ? ("block") : ("none");
+    var displayStyleOpposite = stepOne ? ("none") : ("block");
     
-    document.getElementById("submitBtn").style.display = displayStyle;
+    document.getElementById("submit-btn").style.display = displayStyle;
+    document.getElementById("th-answer").style.display = displayStyleOpposite;
+    document.getElementById("th-token").style.display = displayStyleOpposite;
     
     var rows = document.getElementById("ticks").getElementsByTagName("tr");
     rows[0].getElementsByTagName("th")[0].getElementsByTagName("input")[0].
