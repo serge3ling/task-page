@@ -17,7 +17,7 @@ public class TaskPage {
     private String mask = "";
     
     public TaskPage() {
-        System.out.println("Створюється новий примірник TaskPage.");
+        System.out.println("Creating a new TaskPage.");
         users = new ArrayList<User>();
         users.add(new User("nick", "Nicolas Cage", "Hollywood, CA"));
         users.add(new User("doe", "John Doe", "Washington, DC"));
