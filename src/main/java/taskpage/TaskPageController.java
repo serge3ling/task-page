@@ -15,6 +15,12 @@ public class TaskPageController {
         return "request";
     }
     
+    @GetMapping("/taskpage/getsubmit")
+    public String thatSItSubmitGet(Model model) {
+        model.addAttribute("user", new User("persona", "CAIVS IVLIVS CAESAR", "Roma"));
+        return "thatsit";
+    }
+    
     @PostMapping("/taskpage")
     public String taskPageSubmit(@ModelAttribute TaskPage taskPage) {
         return "result";
