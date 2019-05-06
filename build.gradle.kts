@@ -3,8 +3,8 @@ plugins {
     application
     id("war")
     id("idea")
-    id("org.springframework.boot") version "2.1.4.RELEASE"
-    id("io.spring.dependency-management") version "1.0.7.RELEASE"
+    id("org.springframework.boot").version("2.1.4.RELEASE")
+    id("io.spring.dependency-management").version("1.0.7.RELEASE")
 }
 
 tasks.getByName("bootWar") {
